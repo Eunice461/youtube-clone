@@ -17,11 +17,13 @@ function getPath({
   videoId: Video["videoId"];
   extension: Video["extension"];
 }) {
+  
   return `${process.cwd()}/videos/${videoId}.${extension}`;
 }
 
 export async function uploadVideoHandler(req: Request, res: Response) {
   const bb = busboy({ headers: req.headers });
+  
 
   const user = res.locals.user;
 
@@ -34,6 +36,12 @@ export async function uploadVideoHandler(req: Request, res: Response) {
 
     const extension = info.mimeType.split("/")[1];
 
+    console.log(info);
+    console.log(file);
+    
+    
+    
+
     const filePath = getPath({
       videoId: video.videoId,
       extension,
@@ -44,6 +52,7 @@ export async function uploadVideoHandler(req: Request, res: Response) {
     await video.save();
 
     const stream = fs.createWriteStream(filePath);
+
 
     file.pipe(stream);
   });
@@ -110,6 +119,7 @@ export async function streamVideoHandler(req: Request, res: Response) {
   });
 
   const fileSizeInBytes = fs.statSync(filePath).size;
+  
 
   const chunkStart = Number(range.replace(/\D/g, ""));
 
@@ -119,6 +129,7 @@ export async function streamVideoHandler(req: Request, res: Response) {
   );
 
   const contentLength = chunkEnd - chunkStart + 1;
+  
 
   const headers = {
     "Content-Range": `bytes ${chunkStart}-${chunkEnd}/${fileSizeInBytes}`,
@@ -127,6 +138,7 @@ export async function streamVideoHandler(req: Request, res: Response) {
     "Content-Type": `video/${video.extension}`,
     "Cross-Origin-Resource-Policy": "cross-origin",
   };
+  
 
   res.writeHead(StatusCodes.PARTIAL_CONTENT, headers);
 
@@ -134,6 +146,7 @@ export async function streamVideoHandler(req: Request, res: Response) {
     start: chunkStart,
     end: chunkEnd,
   });
+
 
   videoStream.pipe(res);
 }

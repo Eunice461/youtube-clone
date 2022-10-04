@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import logger from "./logger";
 
-const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING || "mongodb+srv://NFT:Incorrect007@cluster0.pkotz.mongodb.net/youtube-clone?retryWrites=true&w=majority";
+const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING 
 
 export async function connectToDatabase() {
   try {
